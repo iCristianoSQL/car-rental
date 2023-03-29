@@ -1,14 +1,21 @@
+require "./cliente.rb"
+require "./erro_validacao.rb"
+require 'date'
+# require "./reserva.rb"
+
 class Carro
     @@Carros = []
 
-    attr_accessor :fabricante, :modelo, :ano, :placa, :reservado
+    attr_accessor :fabricante, :modelo, :ano, :placa, :reservado, :locacao
 
-    def initialize(fabricante, modelo, ano, placa)
+    def initialize(fabricante, modelo, ano, placa, reservado = false, locacao = false)
+        raise ErroValidacao.new("Já existe um carro com a placa #{placa}") if @@Carros.any? { |carro| carro[:placa] == placa }
         @fabricante = fabricante
         @modelo = modelo
         @ano = ano
         @placa = placa
-        @reservado = false
+        @reservado = reservado
+        @locacao = locacao
         @@Carros << self.to_hash
     end
 
@@ -18,7 +25,8 @@ class Carro
           modelo: @modelo,
           ano: @ano,
           placa: @placa,
-          reservado: @reservado
+          reservado: @reservado,
+          locacao: @locacao
         }
     end
 
@@ -34,16 +42,4 @@ class Carro
         indice = @@Carros.find_index { |elemento| elemento[:placa] == placa }
         @@Carros.delete_at(indice) if indice
     end
-
-    def reservar 
-        @reservado = true
-    end
 end
-
-Carro.new('Honda', 'Fit', 2018, 'RAR-2803').reservar
-Carro.new('Renault', 'Duster', 2016, 'ACA-1981')
-Carro.new('Volkswagen', 'Kombi', 2000, 'SOF-5505')
-Carro.new('Nissan', 'kicks', 2017, 'JAV-0101')
-Carro.new('Toyota', 'Corolla', 2020, 'SCR-1010')
-
-p Carro.lista_de_carros

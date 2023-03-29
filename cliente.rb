@@ -1,9 +1,11 @@
+require "./erro_validacao.rb"
 class Cliente
   @@Clientes = []
 
   attr_accessor :nome, :cpf
 
   def initialize(nome, cpf)
+      raise ErroValidacao.new("Já existe um cliente com o nome #{nome}") if @@Clientes.any? { |cliente| cliente[:cpf] == cpf }
       @nome = nome
       @cpf = cpf
       @@Clientes << self.to_hash
